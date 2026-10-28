@@ -1,0 +1,84 @@
+using ProtoBuf;
+
+namespace Common.Resources.Proto;
+
+[ProtoContract]
+public enum CmdTypeDlc
+{
+	[ProtoEnum(Name = "CMD_GET_DLC_REQ")]
+	CmdGetDlcReq = 3550,
+	[ProtoEnum(Name = "CMD_GET_DLC_RSP")]
+	CmdGetDlcRsp = 3551,
+	[ProtoEnum(Name = "CMD_LEVEL_UP_DLC_AVATAR_TALENT_REQ")]
+	CmdLevelUpDlcAvatarTalentReq = 3552,
+	[ProtoEnum(Name = "CMD_LEVEL_UP_DLC_AVATAR_TALENT_RSP")]
+	CmdLevelUpDlcAvatarTalentRsp = 3553,
+	[ProtoEnum(Name = "CMD_EQUIP_DLC_AVATAR_TALENT_REQ")]
+	CmdEquipDlcAvatarTalentReq = 3554,
+	[ProtoEnum(Name = "CMD_EQUIP_DLC_AVATAR_TALENT_RSP")]
+	CmdEquipDlcAvatarTalentRsp = 3555,
+	[ProtoEnum(Name = "CMD_SYNC_DLC_AVATAR_NOTIFY")]
+	CmdSyncDlcAvatarNotify = 3556,
+	[ProtoEnum(Name = "CMD_MODIFY_DLC_NAME_REQ")]
+	CmdModifyDlcNameReq = 3557,
+	[ProtoEnum(Name = "CMD_MODIFY_DLC_NAME_RSP")]
+	CmdModifyDlcNameRsp = 3558,
+	[ProtoEnum(Name = "CMD_GET_DLC_AVATAR_REQ")]
+	CmdGetDlcAvatarReq = 3559,
+	[ProtoEnum(Name = "CMD_GET_DLC_AVATAR_RSP")]
+	CmdGetDlcAvatarRsp = 3560,
+	[ProtoEnum(Name = "CMD_TAKE_DLC_LEVEL_REWARD_REQ")]
+	CmdTakeDlcLevelRewardReq = 3561,
+	[ProtoEnum(Name = "CMD_TAKE_DLC_LEVEL_REWARD_RSP")]
+	CmdTakeDlcLevelRewardRsp = 3562,
+	[ProtoEnum(Name = "CMD_DLC_TOWER_STAGE_BEGIN_REQ")]
+	CmdDlcTowerStageBeginReq = 3563,
+	[ProtoEnum(Name = "CMD_DLC_TOWER_STAGE_BEGIN_RSP")]
+	CmdDlcTowerStageBeginRsp = 3564,
+	[ProtoEnum(Name = "CMD_DLC_TOWER_STAGE_END_REQ")]
+	CmdDlcTowerStageEndReq = 3565,
+	[ProtoEnum(Name = "CMD_DLC_TOWER_STAGE_END_RSP")]
+	CmdDlcTowerStageEndRsp = 3566,
+	[ProtoEnum(Name = "CMD_DLC_AVATAR_REVIVE_REQ")]
+	CmdDlcAvatarReviveReq = 3569,
+	[ProtoEnum(Name = "CMD_DLC_AVATAR_REVIVE_RSP")]
+	CmdDlcAvatarReviveRsp = 3570,
+	[ProtoEnum(Name = "CMD_GET_DLC_TOWER_RANK_REQ")]
+	CmdGetDlcTowerRankReq = 3571,
+	[ProtoEnum(Name = "CMD_GET_DLC_TOWER_RANK_RSP")]
+	CmdGetDlcTowerRankRsp = 3572,
+	[ProtoEnum(Name = "CMD_TAKE_DLC_RANK_REWARD_NOTIFY")]
+	CmdTakeDlcRankRewardNotify = 3573,
+	[ProtoEnum(Name = "CMD_GET_DLC_TOWER_REQ")]
+	CmdGetDlcTowerReq = 3574,
+	[ProtoEnum(Name = "CMD_GET_DLC_TOWER_RSP")]
+	CmdGetDlcTowerRsp = 3575,
+	[ProtoEnum(Name = "CMD_RESET_DLC_TOWER_PROGRESS_REQ")]
+	CmdResetDlcTowerProgressReq = 3576,
+	[ProtoEnum(Name = "CMD_RESET_DLC_TOWER_PROGRESS_RSP")]
+	CmdResetDlcTowerProgressRsp = 3577,
+	[ProtoEnum(Name = "CMD_FINISH_DLC_DIALOG_REQ")]
+	CmdFinishDlcDialogReq = 3578,
+	[ProtoEnum(Name = "CMD_FINISH_DLC_DIALOG_RSP")]
+	CmdFinishDlcDialogRsp = 3579,
+	[ProtoEnum(Name = "CMD_REFRESH_DLC_TALENT_AFFIX_REQ")]
+	CmdRefreshDlcTalentAffixReq = 3580,
+	[ProtoEnum(Name = "CMD_REFRESH_DLC_TALENT_AFFIX_RSP")]
+	CmdRefreshDlcTalentAffixRsp = 3581,
+	[ProtoEnum(Name = "CMD_SELECT_DLC_TALENT_AFFIX_REQ")]
+	CmdSelectDlcTalentAffixReq = 3584,
+	[ProtoEnum(Name = "CMD_SELECT_DLC_TALENT_AFFIX_RSP")]
+	CmdSelectDlcTalentAffixRsp = 3585,
+	[ProtoEnum(Name = "CMD_UNLOCK_DLC_PHOTO_REQ")]
+	CmdUnlockDlcPhotoReq = 3586,
+	[ProtoEnum(Name = "CMD_UNLOCK_DLC_PHOTO_RSP")]
+	CmdUnlockDlcPhotoRsp = 3587,
+	[ProtoEnum(Name = "CMD_SWITCH_DLC_AVATAR_TALENT_REQ")]
+	CmdSwitchDlcAvatarTalentReq = 3588,
+	[ProtoEnum(Name = "CMD_SWITCH_DLC_AVATAR_TALENT_RSP")]
+	CmdSwitchDlcAvatarTalentRsp = 3589,
+	[ProtoEnum(Name = "CMD_REPORT_DLC_DROP_ITEM_REQ")]
+	CmdReportDlcDropItemReq = 3590,
+	[ProtoEnum(Name = "CMD_REPORT_DLC_DROP_ITEM_RSP")]
+	CmdReportDlcDropItemRsp = 3591
+}

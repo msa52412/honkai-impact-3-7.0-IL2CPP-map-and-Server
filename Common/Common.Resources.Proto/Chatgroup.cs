@@ -1,0 +1,125 @@
+using System.Collections.Generic;
+using System.ComponentModel;
+using ProtoBuf;
+
+namespace Common.Resources.Proto;
+
+[ProtoContract]
+public class Chatgroup : IExtensible
+{
+	private IExtension __pbn__extensionData;
+
+	private uint? __pbn__ChatgroupId;
+
+	private string __pbn__Name;
+
+	private string __pbn__Notice;
+
+	private uint? __pbn__IconId;
+
+	[ProtoMember(1, Name = "chatgroup_id")]
+	public uint ChatgroupId
+	{
+		get
+		{
+			return __pbn__ChatgroupId.GetValueOrDefault();
+		}
+		set
+		{
+			__pbn__ChatgroupId = value;
+		}
+	}
+
+	[ProtoMember(2, Name = "name")]
+	[DefaultValue("")]
+	public string Name
+	{
+		get
+		{
+			return __pbn__Name ?? "";
+		}
+		set
+		{
+			__pbn__Name = value;
+		}
+	}
+
+	[ProtoMember(3, Name = "notice")]
+	[DefaultValue("")]
+	public string Notice
+	{
+		get
+		{
+			return __pbn__Notice ?? "";
+		}
+		set
+		{
+			__pbn__Notice = value;
+		}
+	}
+
+	[ProtoMember(4, Name = "icon_id")]
+	public uint IconId
+	{
+		get
+		{
+			return __pbn__IconId.GetValueOrDefault();
+		}
+		set
+		{
+			__pbn__IconId = value;
+		}
+	}
+
+	[ProtoMember(5, Name = "member_list")]
+	public List<ChatgroupMember> MemberLists { get; } = new List<ChatgroupMember>();
+
+
+	[ProtoMember(6, Name = "label_id_list")]
+	public uint[] LabelIdLists { get; set; }
+
+	IExtension IExtensible.GetExtensionObject(bool createIfMissing)
+	{
+		return Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+	}
+
+	public bool ShouldSerializeChatgroupId()
+	{
+		return __pbn__ChatgroupId.HasValue;
+	}
+
+	public void ResetChatgroupId()
+	{
+		__pbn__ChatgroupId = null;
+	}
+
+	public bool ShouldSerializeName()
+	{
+		return __pbn__Name != null;
+	}
+
+	public void ResetName()
+	{
+		__pbn__Name = null;
+	}
+
+	public bool ShouldSerializeNotice()
+	{
+		return __pbn__Notice != null;
+	}
+
+	public void ResetNotice()
+	{
+		__pbn__Notice = null;
+	}
+
+	public bool ShouldSerializeIconId()
+	{
+		return __pbn__IconId.HasValue;
+	}
+
+	public void ResetIconId()
+	{
+		__pbn__IconId = null;
+	}
+}

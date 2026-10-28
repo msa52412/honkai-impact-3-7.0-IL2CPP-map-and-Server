@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>Server</AssemblyName>
+    <RootNamespace>Server</RootNamespace>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>$(NoWarn);CS8632;CS0108;CS0114;CS0649;CS0169;CS0414;CS8981;CS0162;CS0219;CS0105</NoWarn>
+    <InvariantGlobalization>false</InvariantGlobalization>
+    <!-- HttpServer.Program 也有 Main（HTTP 那条线），真正的入口是 Server.Program -->
+    <StartupObject>Server.Program</StartupObject>
+    <!--
+      注意：这里刻意不设 OutputPath。
+      只有 publish 才往 run\ 写；dotnet build 留在 bin\。
+      否则 build 和 publish 会同时往 run\ 塞一份框架文件（runtimes\ + win-x64\，多占 130MB）。
+
+      发布必须带 -r win-x64 和 self-contained 开关（见 docs\BUILD.md）：
+        dotnet publish -c Release -r win-x64 [self-contained] -o ..\run
+
+      为什么不能省：本机只装了 .NET 9 运行时，没有 .NET 8。
+      run\ 里是自包含产物（带 coreclr.dll / hostfxr.dll），
+      一旦用框架依赖方式覆盖，host 会拿 run\ 当 DOTNET_ROOT 去找 8.0.0 框架，然后报
+      "You must install or update .NET to run this application"，443/8081 全起不来。
+    -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- HTTP 443/8081 用 Kestrel -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+</Project>

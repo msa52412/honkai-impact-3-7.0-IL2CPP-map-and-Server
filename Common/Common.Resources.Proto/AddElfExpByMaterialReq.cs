@@ -1,0 +1,96 @@
+using ProtoBuf;
+
+namespace Common.Resources.Proto;
+
+[ProtoContract]
+public class AddElfExpByMaterialReq : IExtensible
+{
+	[ProtoContract]
+	public enum CmdId
+	{
+		[ProtoEnum(Name = "CMD_ID")]
+		CmdId = 2107
+	}
+
+	private IExtension __pbn__extensionData;
+
+	private uint? __pbn__ElfId;
+
+	private uint? __pbn__MaterialId;
+
+	private uint? __pbn__MaterialNum;
+
+	[ProtoMember(1, Name = "elf_id")]
+	public uint ElfId
+	{
+		get
+		{
+			return __pbn__ElfId.GetValueOrDefault();
+		}
+		set
+		{
+			__pbn__ElfId = value;
+		}
+	}
+
+	[ProtoMember(2, Name = "material_id")]
+	public uint MaterialId
+	{
+		get
+		{
+			return __pbn__MaterialId.GetValueOrDefault();
+		}
+		set
+		{
+			__pbn__MaterialId = value;
+		}
+	}
+
+	[ProtoMember(3, Name = "material_num")]
+	public uint MaterialNum
+	{
+		get
+		{
+			return __pbn__MaterialNum.GetValueOrDefault();
+		}
+		set
+		{
+			__pbn__MaterialNum = value;
+		}
+	}
+
+	IExtension IExtensible.GetExtensionObject(bool createIfMissing)
+	{
+		return Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+	}
+
+	public bool ShouldSerializeElfId()
+	{
+		return __pbn__ElfId.HasValue;
+	}
+
+	public void ResetElfId()
+	{
+		__pbn__ElfId = null;
+	}
+
+	public bool ShouldSerializeMaterialId()
+	{
+		return __pbn__MaterialId.HasValue;
+	}
+
+	public void ResetMaterialId()
+	{
+		__pbn__MaterialId = null;
+	}
+
+	public bool ShouldSerializeMaterialNum()
+	{
+		return __pbn__MaterialNum.HasValue;
+	}
+
+	public void ResetMaterialNum()
+	{
+		__pbn__MaterialNum = null;
+	}
+}

@@ -1,0 +1,41 @@
+using ProtoBuf;
+
+namespace Common.Resources.Proto;
+
+[ProtoContract]
+public class SetDormAvatarRsp : IExtensible
+{
+	[ProtoContract]
+	public enum CmdId
+	{
+		[ProtoEnum(Name = "CMD_ID")]
+		CmdId = 612
+	}
+
+	[ProtoContract]
+	public enum Retcode
+	{
+		[ProtoEnum(Name = "SUCC")]
+		Succ,
+		[ProtoEnum(Name = "FAIL")]
+		Fail,
+		[ProtoEnum(Name = "HOUSE_NOT_EXIST")]
+		HouseNotExist,
+		[ProtoEnum(Name = "ROOM_NOT_EXIST")]
+		RoomNotExist,
+		[ProtoEnum(Name = "AVATAR_NOT_EXIST")]
+		AvatarNotExist,
+		[ProtoEnum(Name = "AVATAR_LIMIT")]
+		AvatarLimit
+	}
+
+	private IExtension __pbn__extensionData;
+
+	[ProtoMember(1, IsRequired = true)]
+	public Retcode retcode { get; set; }
+
+	IExtension IExtensible.GetExtensionObject(bool createIfMissing)
+	{
+		return Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+	}
+}
