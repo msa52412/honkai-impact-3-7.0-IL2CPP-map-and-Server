@@ -57,5 +57,5 @@ build.bat              :: dotnet publish -> run\，自包含，不需要装 .NET
 ## 注意
 
 - 仓库不会 `git pull` 游戏资源，客户端本体（`BH3.exe` / `UserAssembly.dll` / 资源包）一律不入库。
-- 建议**私有仓库**：`docs/` 里含逆向分析与元数据解密记录，`inject_pkg` 是注入器，公开分发容易招惹版权问题。
+
 - 换行：`.gitattributes` 全局 `* -text`，`.bat` / `.vbs` / `.cs` 必须保持 CRLF，否则脚本解析会坏。
