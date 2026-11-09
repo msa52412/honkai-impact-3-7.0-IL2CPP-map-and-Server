@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>卡池设置</title>
+<style>
+  :root{
+    --bg:#12141a; --panel:#191c24; --panel2:#20242e; --line:#2b3140;
+    --txt:#e6e9ef; --dim:#8b93a7; --accent:#4c9aff; --ok:#3ecf8e; --warn:#ffb020; --err:#ff5d5d;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--txt);overflow:hidden;
+    font:13px/1.55 "Segoe UI","Microsoft YaHei",system-ui,sans-serif}
+  .app{display:flex;flex-direction:column;height:100vh;overflow:hidden}
+  header{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:10px 18px;
+    background:var(--panel);border-bottom:1px solid var(--line)}
+  header h1{font-size:14px;margin:0;font-weight:600;letter-spacing:.5px}
+  .spacer{flex:1}
+  .hint{color:var(--dim);font-size:12px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--dim);display:inline-block;margin-right:6px}
+  .dot.on{background:var(--ok);box-shadow:0 0 6px var(--ok)}
+
+  main{flex:1 1 auto;min-height:0;overflow:auto;padding:14px 18px 20px}
+  .cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:14px;align-items:start}
+  @media (max-width:1080px){ .cols{grid-template-columns:minmax(0,1fr)} }
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .card h2{margin:0;padding:11px 14px;font-size:13px;font-weight:600;
+    background:var(--panel2);border-bottom:1px solid var(--line);display:flex;gap:9px;align-items:baseline}
+  .card h2 .t{color:var(--dim);font-size:11px;font-weight:400;letter-spacing:.5px}
+  .card .body{padding:12px 14px}
+  .card .foot{display:flex;gap:8px;align-items:center;padding:10px 14px;
+    border-top:1px solid var(--line);background:#171a21}
+  .card .foot .cur{flex:1;color:var(--dim);font-size:11.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  .row{display:grid;grid-template-columns:104px minmax(0,1fr);gap:10px;align-items:center;margin-bottom:7px}
+  .row > .lb{color:var(--dim);font-size:12px;text-align:right;white-space:nowrap}
+  .row > .lb b{color:#9fc3f5;font-weight:600}
+  .row.up > .lb b{color:var(--warn)}
+  .sep{height:1px;background:var(--line);margin:11px 0 10px}
+  .sep span{position:relative;top:-9px;background:var(--panel);padding-right:8px;
+    color:var(--dim);font-size:11px;letter-spacing:.5px}
+
+  /* ---------------- 搜索补全框 ---------------- */
+  .cb{position:relative;min-width:0}
+  .cb input{width:100%;background:#0e1015;border:1px solid var(--line);color:var(--txt);
+    padding:6px 9px;border-radius:6px;font:12.5px ui-monospace,Consolas,"Microsoft YaHei",monospace;outline:none}
+  .cb input:focus{border-color:var(--accent)}
+  .cb.empty input{border-color:#4a3a1a;background:#181307}
+  .cb input::placeholder{color:#5a6273}
+  .cb-pop{position:absolute;left:0;right:0;top:calc(100% + 3px);z-index:50;max-height:264px;overflow:auto;
+    background:#0f1218;border:1px solid #33415c;border-radius:7px;
+    box-shadow:0 10px 26px rgba(0,0,0,.55);display:none}
+  .cb.open .cb-pop{display:block}
+  .cb-pop .it{display:flex;gap:8px;align-items:baseline;padding:5px 9px;cursor:pointer;font-size:12.5px}
+  .cb-pop .it:hover,.cb-pop .it.act{background:#1d2a3f}
+  .cb-pop .it .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .cb-pop .it .id{color:#5f6779;font:11.5px ui-monospace,Consolas,monospace}
+  .cb-pop .it .tag{font-size:10.5px;color:var(--warn)}
+  .cb-pop .it.ph .nm{color:#6f7686}
+  .cb-pop .none{padding:8px 9px;color:var(--dim);font-size:12px}
+  .cb-pop .more{padding:6px 9px;color:var(--warn);font-size:11.5px;border-top:1px solid var(--line)}
+
+  button{background:var(--accent);color:#fff;border:0;border-radius:6px;padding:7px 15px;
+    font-size:12.5px;cursor:pointer}
+  button:disabled{opacity:.5;cursor:default}
+  button.ghost{background:var(--panel2);color:var(--txt);border:1px solid var(--line)}
+  button.ghost:hover{background:#252a35}
+
+  #log{flex:0 0 auto;max-height:150px;overflow:auto;margin:0;padding:9px 18px;
+    background:#0e1015;border-top:1px solid var(--line);white-space:pre-wrap;
+    font:12px/1.55 ui-monospace,Consolas,monospace;color:#c8cede}
+  #log .ok{color:var(--ok)} #log .err{color:var(--err)} #log .cmd{color:var(--accent)}
+  #log .dim{color:var(--dim)}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>卡池设置</h1>
+    <span><span id="dot" class="dot"></span><span id="stat" class="hint">加载中…</span></span>
+    <span class="spacer"></span>
+    <span class="hint" id="idxInfo"></span>
+    <button class="ghost" id="reload">从文件重载</button>
+  </header>
+
+  <main>
+    <div class="cols">
+      <!-- ======================= 扩充池 ======================= -->
+      <section class="card" id="card1">
+        <h2>扩充补给 <span class="t" id="t1"></span></h2>
+        <div class="body">
+          <div class="row up"><span class="lb"><b>UP S级</b></span><div class="cb" id="cb_s"></div></div>
+          <div class="sep"><span>A 级角色（4 个）</span></div>
+          <div class="row"><span class="lb">A 级 1</span><div class="cb" id="cb_a0"></div></div>
+          <div class="row"><span class="lb">A 级 2</span><div class="cb" id="cb_a1"></div></div>
+          <div class="row"><span class="lb">A 级 3</span><div class="cb" id="cb_a2"></div></div>
+          <div class="row"><span class="lb">A 级 4</span><div class="cb" id="cb_a3"></div></div>
+        </div>
+        <div class="foot">
+          <span class="cur" id="cur1"></span>
+          <button id="save1">保存扩充池</button>
+        </div>
+      </section>
+
+      <!-- ======================= 精准池 ======================= -->
+      <section class="card" id="card2">
+        <h2>精准补给 <span class="t" id="t2"></span></h2>
+        <div class="body">
+          <div class="row up"><span class="lb"><b>UP 武器</b></span><div class="cb" id="cb_uw"></div></div>
+          <div class="sep"><span>其他武器（6 个）</span></div>
+          <div class="row"><span class="lb">武器 1</span><div class="cb" id="cb_w0"></div></div>
+          <div class="row"><span class="lb">武器 2</span><div class="cb" id="cb_w1"></div></div>
+          <div class="row"><span class="lb">武器 3</span><div class="cb" id="cb_w2"></div></div>
+          <div class="row"><span class="lb">武器 4</span><div class="cb" id="cb_w3"></div></div>
+          <div class="row"><span class="lb">武器 5</span><div class="cb" id="cb_w4"></div></div>
+          <div class="row"><span class="lb">武器 6</span><div class="cb" id="cb_w5"></div></div>
+
+          <div class="sep"><span>UP 圣痕（上 / 中 / 下）</span></div>
+          <div class="row up"><span class="lb"><b>上位</b></span><div class="cb" id="cb_su0"></div></div>
+          <div class="row up"><span class="lb"><b>中位</b></span><div class="cb" id="cb_su1"></div></div>
+          <div class="row up"><span class="lb"><b>下位</b></span><div class="cb" id="cb_su2"></div></div>
+
+          <div class="sep"><span>其他圣痕（4 套，选套名自动带出上中下）</span></div>
+          <div class="row"><span class="lb">套装 1</span><div class="cb" id="cb_st0"></div></div>
+          <div class="row"><span class="lb">套装 2</span><div class="cb" id="cb_st1"></div></div>
+          <div class="row"><span class="lb">套装 3</span><div class="cb" id="cb_st2"></div></div>
+          <div class="row"><span class="lb">套装 4</span><div class="cb" id="cb_st3"></div></div>
+        </div>
+        <div class="foot">
+          <span class="cur" id="cur2"></span>
+          <button id="save2">保存精准池</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <pre id="log"></pre>
+  <div id="effbar" style="flex:0 0 auto;padding:6px 18px;background:#151922;border-top:1px solid var(--line);
+       color:var(--dim);font:11.5px/1.5 ui-monospace,Consolas,monospace;overflow:hidden;
+       text-overflow:ellipsis;white-space:nowrap">
+    <span style="color:#5f6779">服务端生效：</span><span id="eff">—</span>
+  </div>
+</div>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const logEl = $('log');
+
+  function log(text, cls) {
+    const s = document.createElement('span');
+    if (cls) s.className = cls;
+    s.textContent = text.endsWith('\n') ? text : text + '\n';
+    logEl.appendChild(s);
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+
+  async function api(path, body) {
+    const opt = body === undefined ? undefined : {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    };
+    const r = await fetch(path, opt);
+    if (!r.ok) throw new Error(r.status + ' ' + r.statusText);
+    return r.json();
+  }
+
+  // ============================================================ 数据索引
+  let IDX = null;
+  let byAvatar = new Map();     // avatarID -> avatar
+  let byWeapon = new Map();     // 任意 id -> weapon 条目
+  let byStigma = new Map();     // 任意 id -> stigmata 条目
+  let bySetTriple = new Map();  // "t,m,b" -> set
+
+  function buildMaps() {
+    byAvatar = new Map(IDX.avatars.map(a => [a.id, a]));
+    byWeapon = new Map();
+    IDX.weapons.forEach(w => (w.ids || [w.id]).forEach(i => byWeapon.set(i, w)));
+    byStigma = new Map();
+    IDX.stigmata.forEach(s => (s.ids || [s.id]).forEach(i => byStigma.set(i, s)));
+    bySetTriple = new Map(IDX.sets.map(s => [s.t + ',' + s.m + ',' + s.b, s]));
+  }
+
+  function match(q, o) {
+    if (!q) return true;
+    q = q.toLowerCase();
+    if ((o.name || '').toLowerCase().includes(q)) return true;
+    if ((o.alias || '').toLowerCase().includes(q)) return true;
+    if (String(o.id).startsWith(q)) return true;
+    if (o.ids && o.ids.some(i => String(i).startsWith(q))) return true;
+    return false;
+  }
+
+  // ============================================================ 搜索补全框
+  // 每个输入框 = 一个 combobox：显示「名字」，内部记 id；支持按 id / 中文名过滤。
+  function Combo(host, opts) {
+    const box = document.createElement('div');
+    box.className = 'cb empty';
+    const inp = document.createElement('input');
+    inp.type = 'text';
+    inp.autocomplete = 'off';
+    inp.spellcheck = false;
+    inp.placeholder = opts.placeholder || '输入 id 或名字搜索';
+    const pop = document.createElement('div');
+    pop.className = 'cb-pop';
+    box.appendChild(inp);
+    box.appendChild(pop);
+    host.appendChild(box);
+
+    let sel = null;      // {id, label} 或 {set}
+    let list = [];
+    let act = -1;
+
+    // 以前只渲染前 60 条：武器按星级倒序，56 件 6★ 就把 5★ 挤没了，
+    // 看起来像「只有六星、五星少了很多」。现在全部渲染（最多 500），
+    // 真超了在末尾给一行「还有 N 条」。
+    const LIMIT = 500;
+
+    function render(q) {
+      const all = opts.items.filter(o => match(q, o));
+      const items = all.slice(0, LIMIT);
+      list = items;
+      act = items.length ? 0 : -1;
+      pop.innerHTML = '';
+      if (!items.length) {
+        const d = document.createElement('div');
+        d.className = 'none';
+        d.textContent = '没有匹配的条目';
+        pop.appendChild(d);
+        return;
+      }
+      items.forEach((o, i) => {
+        const d = document.createElement('div');
+        d.className = 'it' + (o.ph ? ' ph' : '') + (i === act ? ' act' : '');
+        const nm = document.createElement('span');
+        nm.className = 'nm';
+        nm.textContent = opts.label(o);
+        const id = document.createElement('span');
+        id.className = 'id';
+        id.textContent = opts.sublabel ? opts.sublabel(o) : o.id;
+        d.appendChild(nm);
+        if (o.ph) {
+          const t = document.createElement('span');
+          t.className = 'tag';
+          t.textContent = '未收录';
+          d.appendChild(t);
+        }
+        d.appendChild(id);
+        d.onmousedown = ev => { ev.preventDefault(); pick(o); };
+        pop.appendChild(d);
+      });
+      if (all.length > items.length) {
+        const f = document.createElement('div');
+        f.className = 'more';
+        f.textContent = '共 ' + all.length + ' 条，只列出前 ' + items.length + ' 条 —— 继续输入可缩小范围';
+        pop.appendChild(f);
+      }
+    }
+
+    function open(q) {
+      render(q);
+      box.classList.add('open');
+    }
+    function close() { box.classList.remove('open'); }
+
+    function pick(o) {
+      sel = o;
+      inp.value = opts.label(o);
+      box.classList.remove('empty');
+      close();
+    }
+
+    function clearSel() {
+      sel = null;
+      box.classList.add('empty');
+    }
+
+    function markActive() {
+      const kids = pop.children;
+      for (let i = 0; i < kids.length; i++) {
+        if (kids[i].classList && kids[i].classList.contains('it')) {
+          kids[i].classList.toggle('act', i === act);
+        }
+      }
+      const cur = pop.children[act];
+      if (cur && cur.scrollIntoView) cur.scrollIntoView({ block: 'nearest' });
+    }
+
+    inp.addEventListener('focus', () => { open(inp.value === (sel ? opts.label(sel) : '') ? '' : inp.value); });
+    inp.addEventListener('input', () => { clearSel(); open(inp.value.trim()); });
+    inp.addEventListener('blur', () => {
+      setTimeout(() => {
+        close();
+        // 没选中就退回上一次的选择；实在没有就留空
+        if (!sel) { inp.value = ''; box.classList.add('empty'); }
+        else { inp.value = opts.label(sel); box.classList.remove('empty'); }
+      }, 120);
+    });
+    inp.addEventListener('keydown', e => {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (!box.classList.contains('open')) { open(inp.value.trim()); return; }
+        if (!list.length) return;
+        act = (act + (e.key === 'ArrowDown' ? 1 : -1) + list.length) % list.length;
+        markActive();
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (box.classList.contains('open') && act >= 0 && list[act]) pick(list[act]);
+        else inp.blur();
+      } else if (e.key === 'Escape') {
+        close();
+        inp.blur();
+      }
+    });
+
+    return {
+      el: inp,
+      get value() { return sel; },
+      set(o) {
+        sel = o || null;
+        inp.value = o ? opts.label(o) : '';
+        box.classList.toggle('empty', !o);
+      }
+    };
+  }
+
+  // ============================================================ 字段定义
+  const avatars = () => IDX.avatars;
+  const weapons = () => IDX.weapons;
+  const stigmata = () => IDX.stigmata;
+  const sets = () => IDX.sets;
+
+  const LB_AVATAR = o => o.name + (o.alias ? '（' + o.alias + '）' : '');
+  // 装备的星级写进显示名：同名不同星（磁暴·斩 5★ / 6★）在输入框里也得能区分
+  const starTag = o => (o.star ? ' ★' + o.star : '');
+  const LB_WEAPON = o => o.name + starTag(o);
+  const LB_STIGMA = o => o.name + starTag(o);
+  const LB_SET = o => o.name + starTag(o) + (o.mix ? '（混搭套）' : '（上/中/下）');
+
+  const SUB_STAR = o => o.star + ' · ' + o.id;
+  const SUB_CARD = o => o.id + ' → 卡 ' + o.card;
+  // 混搭套三件不同名，把实际名字列出来，否则光看套名不知道拿到的是什么
+  const SUB_SET = o => (o.parts && o.parts.length === 3)
+    ? o.parts.join(' / ')
+    : (o.t + ' / ' + o.m + ' / ' + o.b);
+
+  let cS, cA = [], cUW, cW = [], cSU = [], cST = [];
+
+  function buildForm() {
+    cS = Combo($('cb_s'), { items: avatars().filter(a => a.star === 'S'), label: LB_AVATAR, sublabel: SUB_CARD, placeholder: 'S 级角色：输入名字或 avatarID' });
+    for (let i = 0; i < 4; i++) {
+      cA.push(Combo($('cb_a' + i), { items: avatars().filter(a => a.star === 'A'), label: LB_AVATAR, sublabel: SUB_CARD, placeholder: 'A 级角色 ' + (i + 1) }));
+    }
+    cUW = Combo($('cb_uw'), { items: weapons(), label: LB_WEAPON, sublabel: SUB_STAR, placeholder: 'UP 武器：输入名字或 id' });
+    for (let i = 0; i < 6; i++) {
+      cW.push(Combo($('cb_w' + i), { items: weapons(), label: LB_WEAPON, sublabel: SUB_STAR, placeholder: '武器 ' + (i + 1) }));
+    }
+    const posItems = ['T', 'M', 'B'].map(p => stigmata().filter(s => s.pos === p));
+    const posName = ['上', '中', '下'];
+    for (let i = 0; i < 3; i++) {
+      cSU.push(Combo($('cb_su' + i), { items: posItems[i], label: LB_STIGMA, sublabel: SUB_STAR, placeholder: 'UP 圣痕（' + posName[i] + '）' }));
+    }
+    for (let i = 0; i < 4; i++) {
+      cST.push(Combo($('cb_st' + i), { items: sets(), label: LB_SET, sublabel: SUB_SET, placeholder: '其他圣痕套装 ' + (i + 1) }));
+    }
+  }
+
+  // ============================================================ 回填
+  function fill(st) {
+    const p1 = st.pool1 || {};
+    const p2 = st.pool2 || {};
+
+    $('t1').textContent = 'gacha_type=' + p1.type + ' · ' + (p1.drops || 0) + ' 条掉落';
+    $('t2').textContent = 'gacha_type=' + p2.type + ' · ' + (p2.drops || 0) + ' 条掉落';
+    $('cur1').textContent = p1.content || '';
+    $('cur1').title = p1.content || '';
+    $('cur2').textContent = p2.content || '';
+    $('cur2').title = p2.content || '';
+
+    cS.set(byAvatar.get(p1.s) || null);
+    (p1.a || []).forEach((id, i) => { if (cA[i]) cA[i].set(byAvatar.get(id) || null); });
+
+    cUW.set(byWeapon.get(p2.upWeapon) || null);
+    (p2.weapons || []).forEach((id, i) => { if (cW[i]) cW[i].set(byWeapon.get(id) || null); });
+    (p2.upStigmata || []).forEach((id, i) => { if (cSU[i]) cSU[i].set(byStigma.get(id) || null); });
+    (p2.sets || []).forEach((t, i) => {
+      if (!cST[i]) return;
+      const s = bySetTriple.get(t.join(','));
+      if (s) { cST[i].set(s); return; }
+      // 老配置里用的是非满星 id（同一套的另一档），整组对不上标准三件套：
+      // 按套名显示，但**保留原来的三个 id**，免得一打开页面就把配置悄悄改了。
+      const first = byStigma.get(t[0]);
+      cST[i].set(first ? { name: first.base, star: first.star, t: t[0], m: t[1], b: t[2] } : null);
+    });
+  }
+
+  // ============================================================ 保存
+  function collect1() {
+    const s = cS.value;
+    if (!s) return { err: '先选 UP 的 S 级角色' };
+    const a = [];
+    for (let i = 0; i < 4; i++) {
+      const v = cA[i].value;
+      if (!v) return { err: 'A 级角色 ' + (i + 1) + ' 还没选' };
+      a.push(v.id);
+    }
+    if (new Set(a).size !== a.length) return { err: 'A 级角色有重复' };
+    if (a.includes(s.id)) return { err: 'A 级里不能放 UP 的那个 S 级角色' };
+    return { body: { s: s.id, a: a } };
+  }
+
+  function collect2() {
+    const uw = cUW.value;
+    if (!uw) return { err: '先选 UP 武器' };
+    const w = [];
+    for (let i = 0; i < 6; i++) {
+      const v = cW[i].value;
+      if (!v) return { err: '武器 ' + (i + 1) + ' 还没选' };
+      w.push(v.id);
+    }
+    const su = [];
+    const posName = ['上', '中', '下'];
+    for (let i = 0; i < 3; i++) {
+      const v = cSU[i].value;
+      if (!v) return { err: 'UP 圣痕的「' + posName[i] + '位」还没选' };
+      su.push(v.id);
+    }
+    const st = [];
+    for (let i = 0; i < 4; i++) {
+      const v = cST[i].value;
+      if (!v) return { err: '其他圣痕套装 ' + (i + 1) + ' 还没选' };
+      st.push([v.t, v.m, v.b]);
+    }
+    const allW = [uw.id].concat(w);
+    if (new Set(allW).size !== allW.length) return { err: '武器有重复（UP 和其他不能是同一把）' };
+    const allS = su.concat(st.flat());
+    if (new Set(allS).size !== allS.length) return { err: '圣痕有重复（UP 和套装之间不能是同一件）' };
+    return { body: { upWeapon: uw.id, weapons: w, upStigmata: su, sets: st } };
+  }
+
+  async function save(which) {
+    const r = which === 1 ? collect1() : collect2();
+    if (r.err) { log('✗ ' + r.err, 'err'); return; }
+
+    const btn = $(which === 1 ? 'save1' : 'save2');
+    btn.disabled = true;
+    log('▶ 保存' + (which === 1 ? '扩充池' : '精准池'), 'cmd');
+    try {
+      const d = await api('/gm/api/gacha/pool' + which, r.body);
+      log(d.output || (d.ok ? '已保存' : '保存失败'), d.ok ? 'ok' : 'err');
+      if (d.ok) await loadState(true);
+    } catch (e) {
+      log('请求失败：' + e.message, 'err');
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  // ============================================================ 加载
+  async function loadState(quiet) {
+    try {
+      const st = await api('/gm/api/gacha/state');
+      $('dot').className = 'dot on';
+      $('stat').textContent = '已连接';
+      fill(st);
+      if (st.effective) {
+        $('eff').textContent = st.effective;
+        $('eff').title = st.effective;
+      }
+      if (!quiet) log('已载入当前阵容。', 'dim');
+    } catch (e) {
+      $('dot').className = 'dot';
+      $('stat').textContent = '读取失败';
+      log('读取当前阵容失败：' + e.message, 'err');
+    }
+  }
+
+  async function boot() {
+    log('读取候选清单…', 'dim');
+    try {
+      IDX = await api('/gm/api/gacha/index');
+    } catch (e) {
+      log('候选清单读取失败：' + e.message, 'err');
+      return;
+    }
+    if (!IDX.avatars || !IDX.weapons || !IDX.stigmata) {
+      log('候选清单格式不对（缺 avatars/weapons/stigmata）', 'err');
+      return;
+    }
+    buildMaps();
+    $('idxInfo').textContent = '候选：角色 ' + IDX.avatars.length
+      + ' · 武器 ' + IDX.weapons.length
+      + ' · 圣痕 ' + IDX.stigmata.length
+      + ' · 套装 ' + IDX.sets.length;
+    buildForm();
+    await loadState();
+    log('每个输入框都能按 id 或中文名搜索，↑↓ 选、回车确认。', 'dim');
+  }
+
+  $('save1').onclick = () => save(1);
+  $('save2').onclick = () => save(2);
+  $('reload').onclick = () => { log('▶ 从文件重载', 'cmd'); loadState(); };
+
+  boot();
+})();
+</script>
+</body>
+</html>

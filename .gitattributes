@@ -1,0 +1,16 @@
+# 本项目全部在 Windows 上开发，.bat / .vbs / .cs 必须逐字节保持原样：
+# cmd.exe 和 wscript 按字节偏移解析脚本，换行被 git 归一化成 LF 就会坏。
+# 所以全局关闭换行归一化。
+* -text
+
+# 明确标记二进制，避免被当文本 diff
+*.dll     binary
+*.exe     binary
+*.pdb     binary
+*.lib     binary
+*.xz      binary
+*.db      binary
+*.sqlite  binary
+*.png     binary
+*.jpg     binary
+*.xlsx    binary

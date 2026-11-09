@@ -1,0 +1,55 @@
+# ============================================================
+#  BH3 工作区统一忽略规则
+#  子目录里的 .gitignore（如 server-v2/.gitignore）仍然生效，
+#  这里是全仓库公共部分。
+# ============================================================
+
+# ---- .NET / C++ 构建产物 ----
+**/bin/
+**/obj/
+*.pdb
+*.exe
+*.dll
+*.lib
+*.exp
+*.ilk
+*.obj
+*.tlog
+*.idb
+*.vs/
+.vs/
+*.user
+*.suo
+
+# ---- 备份与临时文件 ----
+*.bak
+*.bak-*
+*.bak.*
+*.prev.bak
+*.new
+*.orig
+*.rej
+*.tmp
+*.log
+*.log.*
+
+# ---- Python ----
+__pycache__/
+*.pyc
+*.pyo
+
+# ---- 符号与调用图：256MB 派生数据不进仓库 ----
+# 体积原因（单文件最大 125MB > GitHub 100MB 红线），
+# 改走 Release 附件：见 符号与调用图工具包/data/README.md
+符号与调用图工具包/data/*.tsv
+符号与调用图工具包/data/*.json
+符号与调用图工具包/data/*.bin
+
+# ---- 归档与暂存区（本地用，不上传）----
+_release/
+.git-archive/
+
+# ---- 系统文件 ----
+Thumbs.db
+Desktop.ini
+.DS_Store

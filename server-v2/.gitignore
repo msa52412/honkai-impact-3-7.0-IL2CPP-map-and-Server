@@ -1,0 +1,35 @@
+# ---- .NET 构建产物 ----
+**/bin/
+**/obj/
+
+# ---- publish 输出（build.bat 生成，勿纳入版本控制）----
+# run/ 下只保留手工维护的调参 json，其余（dll/pdb/Resources/data）全部忽略
+run/*
+!run/appsettings.json
+!run/config.json
+!run/abyss_ow.json
+!run/ultra_endless.json
+
+# ---- 日志 ----
+*.log
+*.log.*
+log/
+
+# ---- 工具生成物 ----
+tools/out/
+*.tmp
+*.bak
+*.orig
+
+# ---- 数据库与存档 ----
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+run/data/
+
+# ---- 系统文件 ----
+Thumbs.db
+Desktop.ini
+.DS_Store

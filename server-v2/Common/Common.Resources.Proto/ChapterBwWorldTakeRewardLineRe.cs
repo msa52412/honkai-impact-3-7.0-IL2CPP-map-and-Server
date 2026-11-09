@@ -1,0 +1,132 @@
+using ProtoBuf;
+
+namespace Common.Resources.Proto;
+
+[ProtoContract]
+public class ChapterBwWorldTakeRewardLineRewardReq : IExtensible
+{
+	[ProtoContract]
+	public enum CmdId
+	{
+		[ProtoEnum(Name = "CMD_ID")]
+		CmdId = 7660
+	}
+
+	private IExtension __pbn__extensionData;
+
+	private uint? __pbn__ChapterId;
+
+	[ProtoMember(1, Name = "chapter_id")]
+	public uint ChapterId
+	{
+		get
+		{
+			return __pbn__ChapterId.GetValueOrDefault();
+		}
+		set
+		{
+			__pbn__ChapterId = value;
+		}
+	}
+
+	IExtension IExtensible.GetExtensionObject(bool createIfMissing)
+	{
+		return Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+	}
+
+	public bool ShouldSerializeChapterId()
+	{
+		return __pbn__ChapterId.HasValue;
+	}
+
+	public void ResetChapterId()
+	{
+		__pbn__ChapterId = null;
+	}
+}
+[ProtoContract]
+public class ChapterBwWorldTakeRewardLineRewardRsp : IExtensible
+{
+	[ProtoContract]
+	public enum CmdId
+	{
+		[ProtoEnum(Name = "CMD_ID")]
+		CmdId = 7661
+	}
+
+	[ProtoContract]
+	public enum Retcode
+	{
+		[ProtoEnum(Name = "SUCC")]
+		Succ,
+		[ProtoEnum(Name = "FAIL")]
+		Fail,
+		[ProtoEnum(Name = "NO_REWARD")]
+		NoReward,
+		[ProtoEnum(Name = "FEATURE_CLOSED")]
+		FeatureClosed
+	}
+
+	private IExtension __pbn__extensionData;
+
+	private uint? __pbn__ChapterId;
+
+	private uint? __pbn__RewardLineTakenProgress;
+
+	[ProtoMember(1, IsRequired = true)]
+	public Retcode retcode { get; set; }
+
+	[ProtoMember(2, Name = "chapter_id")]
+	public uint ChapterId
+	{
+		get
+		{
+			return __pbn__ChapterId.GetValueOrDefault();
+		}
+		set
+		{
+			__pbn__ChapterId = value;
+		}
+	}
+
+	[ProtoMember(3, Name = "reward_data")]
+	public RewardData RewardData { get; set; }
+
+	[ProtoMember(4, Name = "reward_line_taken_progress")]
+	public uint RewardLineTakenProgress
+	{
+		get
+		{
+			return __pbn__RewardLineTakenProgress.GetValueOrDefault();
+		}
+		set
+		{
+			__pbn__RewardLineTakenProgress = value;
+		}
+	}
+
+	IExtension IExtensible.GetExtensionObject(bool createIfMissing)
+	{
+		return Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+	}
+
+	public bool ShouldSerializeChapterId()
+	{
+		return __pbn__ChapterId.HasValue;
+	}
+
+	public void ResetChapterId()
+	{
+		__pbn__ChapterId = null;
+	}
+
+	public bool ShouldSerializeRewardLineTakenProgress()
+	{
+		return __pbn__RewardLineTakenProgress.HasValue;
+	}
+
+	public void ResetRewardLineTakenProgress()
+	{
+		__pbn__RewardLineTakenProgress = null;
+	}
+}

@@ -1,0 +1,13 @@
+﻿表,天气ID,名称(推导),文本key,图标,Buff列表,实际效果,赛季数
+DLCTowerWeather,1001,无天气,WeatherName1001,102,0,天气为空，使用基础规则，无任何属性改动,144
+DLCTowerWeather,1002,炎阳,WeatherName1002,101,2001 2006 2009 2014,火伤 +50%，冰伤 −50%；燃烧抗性 −50%、持续 −50%（更易点燃但烧得更短）；冻结抗性 +50%、持续 +50%（更难冻结）,106
+DLCTowerWeather,1003,雷暴,WeatherName1003,103,2003 2002 2011 2010,雷伤 +50%，火伤 −50%；麻痹抗性 −50%、持续 −50%；燃烧抗性 +50%、持续 +50%,100
+DLCTowerWeather,1005,迷雾,WeatherName1005,123,2017,全部控制类异常（燃烧 / 麻痹 / 冻结 / 吸魂）抗性 −50%、持续 −50%,104
+ScDLCTowerWeather,1001,无天气,DLC2Tower_WeatherName1001,102,0,天气为空，使用基础规则，无任何属性改动,1
+ScDLCTowerWeather,1002,炎阳,DLC2Tower_WeatherName1002,101,2001 2006 2009 2014,火伤 +50%，冰伤 −50%；燃烧抗性 −50%、持续 −50%（更易点燃但烧得更短）；冻结抗性 +50%、持续 +50%（更难冻结）,122
+ScDLCTowerWeather,1003,雷暴,DLC2Tower_WeatherName1003,103,2003 2002 2011 2010,雷伤 +50%，火伤 −50%；麻痹抗性 −50%、持续 −50%；燃烧抗性 +50%、持续 +50%,121
+ScDLCTowerWeather,1004,霜雪,DLC2Tower_WeatherName1004,124,2005 2004 2013 2012,冰伤 +50%，雷伤 −50%；冻结抗性 −50%、持续 −50%；麻痹抗性 +50%、持续 +50%,0
+ScDLCTowerWeather,1005,迷雾,DLC2Tower_WeatherName1005,123,2017,全部控制类异常（燃烧 / 麻痹 / 冻结 / 吸魂）抗性 −50%、持续 −50%,123
+ScDLCTowerWeather,1006,连击,DLC2Tower_WeatherName1006,124,2019,连击增益，BuffType=1，无 OverrideMap，由关卡 Lua 处理,121
+ScDLCTowerWeather,1007,空战,DLC2Tower_WeatherName1007,123,2020,空中战增益，BuffType=1，无 OverrideMap，由关卡 Lua 处理,122
+ScDLCTowerWeather,1008,霜雪（变体）,DLC2Tower_WeatherName1008,122,2002 2005 2010 2013,冰伤 +50%，火伤 −50%；燃烧抗性 +50%、持续 +50%；冻结抗性 −50%、持续 −50%,123

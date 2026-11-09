@@ -1,0 +1,16 @@
+{
+  "UseLocalCache": false,
+  "CreateAccountOnLoginAttempt": true,
+  "DatabaseFile": "data\\pemukul.sqlite",
+  "Gameserver": {
+    "Port": 16100,
+    "RegionName": "BH3",
+    "Host": "192.168.0.103"
+  },
+  "Http": {
+    "HttpPort": 8081,
+    "HttpsPort": 443,
+    "StaticPort": 80
+  },
+  "VerboseLevel": "Debug"
+}

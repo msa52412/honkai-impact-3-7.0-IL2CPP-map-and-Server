@@ -1,0 +1,10 @@
+# 本项目在 Windows 上单机开发，.bat 必须保持 CRLF（cmd.exe 按字节偏移解析），
+# .cs 也统一 CRLF。这里关闭 git 的换行归一化，保证 checkout 后与磁盘逐字节一致，
+# 避免出现「全文件都改了」的假 diff。
+* -text
+
+# 明确标记二进制，避免以后误入库时被当文本 diff
+*.dll binary
+*.exe binary
+*.pdb binary
+*.db binary
