@@ -48,6 +48,7 @@ __pycache__/
 # ---- 归档与暂存区（本地用，不上传）----
 _release/
 .git-archive/
+.workbuddy/
 
 # ---- 系统文件 ----
 Thumbs.db
